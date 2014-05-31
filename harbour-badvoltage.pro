@@ -18,7 +18,6 @@ SOURCES += src/harbour-badvoltage.cpp \
     src/FileDownloader.cpp
 
 OTHER_FILES += qml/harbour-badvoltage.qml \
-    rpm/harbour-badvoltage.changes.in \
     rpm/harbour-badvoltage.spec \
     rpm/harbour-badvoltage.yaml \
     translations/*.ts \
@@ -34,7 +33,8 @@ OTHER_FILES += qml/harbour-badvoltage.qml \
     qml/pages/LicensePage.qml \
     qml/content/About.qml \
     README \
-    COPYING
+    COPYING \
+    rpm/harbour-badvoltage.changes
 
 # to disable building translations every time, comment out the
 # following CONFIG line

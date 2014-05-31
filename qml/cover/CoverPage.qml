@@ -62,17 +62,17 @@ CoverBackground {
     CoverActionList {
         enabled: player.paused && !player.stopped
         CoverAction {
-            iconSource: "image://theme/icon-cover-refresh"
-            onTriggered: {
-                //console.log("Cover Refresh")
-                feedModel.reloadData()
-            }
-        }
-        CoverAction {
             iconSource: "image://theme/icon-cover-play"
             onTriggered: {
                 //console.log("Cover Play")
                 player.play()
+            }
+        }
+        CoverAction {
+            iconSource: "image://theme/icon-cover-refresh"
+            onTriggered: {
+                //console.log("Cover Refresh")
+                feedModel.reloadData()
             }
         }
     }
@@ -80,17 +80,17 @@ CoverBackground {
     CoverActionList {
         enabled: !player.paused && !player.stopped
         CoverAction {
-            iconSource: "image://theme/icon-cover-refresh"
-            onTriggered: {
-                //console.log("Cover Refresh")
-                feedModel.reloadData()
-            }
-        }
-        CoverAction {
             iconSource: "image://theme/icon-cover-pause"
             onTriggered: {
                 //console.log("Cover Pause")
                 player.pause()
+            }
+        }
+        CoverAction {
+            iconSource: "image://theme/icon-cover-refresh"
+            onTriggered: {
+                //console.log("Cover Refresh")
+                feedModel.reloadData()
             }
         }
     }
