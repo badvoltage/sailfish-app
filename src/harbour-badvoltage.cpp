@@ -22,10 +22,6 @@
   *
   *****************************************************************************/
 
-
-//#ifdef QT_QML_DEBUG
-//#endif
-
 #include <sailfishapp.h>
 #include <QtQuick>
 #include "Settings.h"
@@ -34,19 +30,6 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication* app = SailfishApp::application(argc, argv);
-
-    /*QTranslator qtTranslator;
-    if (qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
-        app->installTranslator(&qtTranslator);
-    }
-
-    QTranslator appTranslator;
-    if (appTranslator.load("translations/harbour-badvoltage-" + QLocale::system().name())) {
-        qDebug() << "Translation:" << "translations/harbour-badvoltage-" + QLocale::system().name();
-        app->installTranslator(&appTranslator);
-    }
-    else
-        qDebug() << "No translation found:" << QLocale::system().name();*/
 
     QQuickView* view = SailfishApp::createView();
     Settings* settings = new Settings("harbour-badvoltage", "BadVoltage");

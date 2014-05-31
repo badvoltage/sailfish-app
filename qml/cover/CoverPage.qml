@@ -35,21 +35,21 @@ CoverBackground {
         y: 220
         anchors.horizontalCenter: parent.horizontalCenter
         color: Theme.highlightColor
-        text: audioPlayer.isStopped ? "Bad Voltage" : getPrettyNumber(audioPlayer.season, audioPlayer.episode)
+        text: player.stopped ? "Bad Voltage" : getPrettyNumber(player.season, player.episode)
     }
 
     Label {
         id: audioPositionLabel
         y: 250
-        visible: !audioPlayer.isStopped
+        visible: !player.stopped
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: Theme.fontSizeSmall
         color: Theme.secondaryColor
-        text: audioPlayer.positionReadable + "/" + audioPlayer.durationReadable
+        text: getTimeFromMs(player.position) + "/" + getTimeFromMs(player.duration)
     }
 
     CoverActionList {
-        enabled: !audioPlayer.isPlaying && audioPlayer.isStopped
+        enabled: player.stopped
         CoverAction {
             iconSource: "image://theme/icon-cover-refresh"
             onTriggered: {
@@ -60,7 +60,7 @@ CoverBackground {
     }
 
     CoverActionList {
-        enabled: !audioPlayer.isPlaying && !audioPlayer.isStopped
+        enabled: player.paused && !player.stopped
         CoverAction {
             iconSource: "image://theme/icon-cover-refresh"
             onTriggered: {
@@ -72,13 +72,13 @@ CoverBackground {
             iconSource: "image://theme/icon-cover-play"
             onTriggered: {
                 //console.log("Cover Play")
-                audioPlayer.play()
+                player.play()
             }
         }
     }
 
     CoverActionList {
-        enabled: audioPlayer.isPlaying && !audioPlayer.isStopped
+        enabled: !player.paused && !player.stopped
         CoverAction {
             iconSource: "image://theme/icon-cover-refresh"
             onTriggered: {
@@ -90,7 +90,7 @@ CoverBackground {
             iconSource: "image://theme/icon-cover-pause"
             onTriggered: {
                 //console.log("Cover Pause")
-                audioPlayer.pause()
+                player.pause()
             }
         }
     }

@@ -24,15 +24,21 @@
 import QtQuick 2.0
 
 Item {
-    property string badVoltage: "<a href=\"http://www.badvoltage.org/\"><strong>Bad Voltage</strong></a><br>
+    property string badVoltage: "<a href=\"" + settings.value("badVoltage/url") + "\"><strong>About Bad Voltage</strong></a><br>
 <br>
-Every two weeks Bad Voltage delivers an amusing take on technology,
-Open Source, politics, music, and anything else we think is interesting,
-as well as interviews and reviews. The show is presented by Jono Bacon,
-Jeremy Garcia, Stuart Langridge, and Bryan Lunduke."
+Bad Voltage is a podcast with Jono Bacon, Jeremy Garcia, Stuart Langridge,
+and Bryan Lunduke, in which they talk about anything that interests them.
+Technology, Open Source, Politics, Music…anything and everything is up for grabs,
+complete with reviews and interviews.<br>
+<br>
+The shows are released under the<br>
+<a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">Creative Commons Attribution Share-Alike</a><br>
+license and as are free to listen to and share with others.<br>
+<a href=\"http://ccmixter.org/files/FreeInstrumentalMusic/43270\">This music</a>
+os used for the theme."
 
-    property string license: "Copyright © 2014  Scharel Clemens <scharelc@gmail.com><br>
-The source code is available on <a href=\"https://github.com/scharel/harbour-badvoltage\">GitHub</a>.<br>
+    property string license: "Copyright © 2014  Scharel Clemens<br>
+The source code of this app is available on <a href=\"" + settings.value("app/gitUrl") + "\">GitHub</a>.<br>
 <br>
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,5 +53,4 @@ GNU General Public License for more details.<br>
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see<br>
 <a href=\"https://www.gnu.org/licenses/\">www.gnu.org/licenses</a>."
-
 }

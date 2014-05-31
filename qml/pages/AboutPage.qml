@@ -53,6 +53,7 @@ Page {
                 textFormat: Text.StyledText
                 horizontalAlignment: Text.AlignHCenter
                 linkColor: Theme.highlightColor
+                font.pixelSize: Theme.fontSizeSmall
                 onLinkActivated: Qt.openUrlExternally(link)
                 text: about.badVoltage
             }

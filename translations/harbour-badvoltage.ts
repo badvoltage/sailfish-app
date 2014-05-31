@@ -61,6 +61,11 @@ Size of the episode in MB (Mega Bytes)</extracomment>
         <extracomment>Delete downloaded episode from device</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Deleting</source>
+        <extracomment>Deleting hint on remorse timer, [SEASON]x[EPISODE] is added</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FeedPage</name>
@@ -127,7 +132,12 @@ Size of the episode in MB (Mega Bytes)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remove mark</source>
+        <source>Deleting</source>
+        <extracomment>Deleting hint on remorse timer, [SEASON]x[EPISODE] is added</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark as unseen</source>
         <extracomment>Unmark feed as seen</extracomment>
         <translation type="unfinished"></translation>
     </message>

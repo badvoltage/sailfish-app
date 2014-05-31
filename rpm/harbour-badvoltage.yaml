@@ -34,6 +34,7 @@ PkgConfigBR:
 Requires:
   - sailfishsilica-qt5 >= 0.10.9
   - qt5-qtdeclarative-import-xmllistmodel
+  - qt5-qtdeclarative-import-multimedia
 
 # All installed files
 Files:

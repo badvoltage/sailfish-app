@@ -33,116 +33,22 @@ ApplicationWindow
     id: app
 
     property var feedModel: FeedData { }
+    Component.onCompleted: feedModel.reloadData()
 
-    Connections {
-        property int tmpPosition
-        target: downloader
-        onFileDownloaded: {
-            if (signalSeason == audioPlayer.season && signalEpisode == audioPlayer.episode) {
-                tmpPosition = audioPlayer.position
-                console.log("Switching audio playback to local file (position: " + tmpPosition + ")")
-                settings.sync()
-                audioPlayer.playEpisode(signalSeason, signalEpisode, tmpPosition)
-            }
-        }
-        onFileDeleted: {
-            if (signalSeason == audioPlayer.season && signalEpisode == audioPlayer.episode) {
-                tmpPosition = audioPlayer.position
-                console.log("Switching audio playback to internet (position: " + tmpPosition + ")")
-                settings.sync()
-                audioPlayer.playEpisode(signalSeason, signalEpisode, tmpPosition)
-            }
-        }
-    }
+    cover: Qt.resolvedUrl("cover/CoverPage.qml")
+    initialPage: Component { FeedPage { } }
 
-    Component.onCompleted: {
-        if (audioPlayer.season !== 0 && audioPlayer.episode !== 0) {
-            if (settings.value("downloads/" + audioPlayer.season + "/" + audioPlayer.episode + "/downloaded", false) === "true")
-                audioPlayer.source = settings.value("downloads/" + audioPlayer.season + "/" + audioPlayer.episode + "/localFile", "NO_LOCAL_FILE")
-            else
-                audioPlayer.source = settings.value("content/" + audioPlayer.season + "/" + audioPlayer.episode + "/enclosure_url", "NO_REMOTE_FILE")
-
-            audioPlayer.pause()
-            //audioPlayer.isPlaying = false
-            //audioPlayer.isStopped = false
-        }
-    }
-
-    Audio {
-        id: audioPlayer
-        autoLoad: false
-
-        property int season: settings.value("audioPlayer/lastSeasonPlayed", 0)
-        property int episode: settings.value("audioPlayer/lastEpisodePlayed", 0)
-        property bool isPlaying: false
-        property bool isStopped: true
-        property string positionReadable: getTime(0)
-        property string durationReadable: getTime(0)
-        property int lastPosition: 0
-        property bool oncePlayed: false
-        signal episodeFinished(int finishedSeason, int finishedEpisode)
-
-        onPositionChanged: {
-            positionReadable = getTime(position)
-            if (position - lastPosition > 100) {
-                lastPosition = position
-                settings.setValue("audioPlayer/lastPosition", position - 1000)
-            }
-        }
-        onDurationChanged: {
-            durationReadable = getTime(duration)
-        }
-
-        onPlaying: {
-            console.log("Playing: " + source)
-            if (!oncePlayed && season === parseInt(settings.value("audioPlayer/lastSeasonPlayed", 0)) && episode === parseInt(settings.value("audioPlayer/lastEpisodePlayed", 0))) {
-                console.log("Continueing last played episode at: " + getTime(settings.value("audioPlayer/lastPosition", 0)))
-                seek(settings.value("audioPlayer/lastPosition", 0))
-            }
-            oncePlayed = true
-            isPlaying = true
-            isStopped = false
-            settings.setValue("audioPlayer/lastSeasonPlayed", season)
-            settings.setValue("audioPlayer/lastEpisodePlayed", episode)
-        }
-        onPaused:{
-            console.log("Paused: " + source)
-            isPlaying = false
-            isStopped = false
-        }
-        onStopped: {
-            console.log("Stopped: " + source)
-            isPlaying = false
-            isStopped = true
-            if (duration - position < 200)
-                episodeFinished(season, episode)
-            season = 0
-            episode = 0
-            settings.remove("audioPlayer/lastSeasonPlayed")
-            settings.remove("audioPlayer/lastEpisodePlayed")
-            settings.remove("audioPlayer/lastPosition")
-        }
-        function playEpisode(newSeason, newEpisode) {
-            newSeason = typeof newSeason !== 'undefined' ? newSeason : season;
-            newEpisode = typeof newEpisode !== 'undefined' ? newEpisode : episode;
-            season = newSeason;
-            episode = newEpisode;
-            //stop();
-            if (settings.value("downloads/" + season + "/" + episode + "/downloaded", false) === "true")
-                source = settings.value("downloads/" + season + "/" + episode + "/localFile", "NO_LOCAL_FILE")
-            else
-                source = settings.value("content/" + season + "/" + episode + "/enclosure_url", "NO_REMOTE_FILE")
-            //console.log("New source: " + source)
-            play();
-        }
-    }
-
-    function getTime(milliseconds) {
+    function getTimeFromMs(milliseconds) {
         var hours = Math.floor(milliseconds / 1000 / 60 / 60)
         var minutes = Math.floor((milliseconds-hours*1000*60*60) / 1000 / 60)
         var seconds = Math.floor((milliseconds-hours*1000*60*60-minutes*1000*60) / 1000)
-
         return (hours < 1 ? "" : hours + ":") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds)
+    }
+    function getMsFromTime(time) {
+        var hours = parseInt(time.split(":", 3)[0])
+        var minutes = parseInt(time.split(":", 3)[1])
+        var seconds = parseInt(time.split(":", 3)[2])
+        return 1000 * (seconds + 60 * (minutes + 60 * hours))
     }
 
     function getSeason(number) {
@@ -158,6 +64,58 @@ ApplicationWindow
         return season + "×" + episode
     }
 
-    cover: Qt.resolvedUrl("cover/CoverPage.qml")
-    initialPage: Component { FeedPage { } }
+    Audio {
+        id: player
+        //autoLoad: false
+
+        property int season: 0
+        property int episode: 0
+        property bool playing: false
+        property bool paused: false
+        property bool stopped: true
+        signal isEndOfMedia()
+
+        onPlaying: {
+            console.log("Playing: " + source)
+            stopped = false
+            paused = false
+            playing = true
+        }
+        onPaused:{
+            console.log("Paused: " + source)
+            stopped = false
+            playing = true
+            paused = true
+        }
+        onStopped: {
+            console.log("Stopped: " + source)
+            playing = false
+            paused = false
+            stopped = true
+            if (status === Audio.EndOfMedia)
+                isEndOfMedia()
+            source = ""
+            season = 0
+            episode = 0
+        }
+        function playEpisode(newSeason, newEpisode) {
+            stop()
+            season = newSeason
+            episode = newEpisode
+            if (downloader.isDownloaded(season, episode))
+                source = settings.value("downloads/" + season + "/" + episode + "/localFile", "NO_LOCAL_FILE")
+            else
+                source = settings.value("content/" + season + "/" + episode + "/enclosure_url", "NO_REMOTE_FILE")
+            play()
+        }
+    }
+
+    // Is not working as expected
+    /*Connections {
+        target: downloader
+        onFileDownloaded: {
+            if (signalSeason === player.season && signalEpisode === player.episode)
+                player.playEpisode(signalSeason, signalEpisode)
+        }
+    }*/
 }

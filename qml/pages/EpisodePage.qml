@@ -23,21 +23,12 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import QtMultimedia 5.0
 
 Page {
     id: episodePage
 
     property int season
     property int episode
-
-    onStatusChanged: {
-        if (status === PageStatus.Active) {
-            //audioPlayer.source = episodeMp3
-        } else if (status === PageStatus.Deactivating) {
-            //audioPlayer.stop()
-        }
-    }
 
     SilicaFlickable {
         width: parent.width
@@ -56,45 +47,65 @@ Page {
                     title: getPrettyNumber(season, episode)
                 }
 
-                property bool isDownloading: false
-                property bool isEnqueued: false
-                property bool isDownloaded: settings.value("downloads/" + season + "/" + episode + "/downloaded", false) === "true"
+                property bool isDownloading: downloader.isDownloading(season, episode)
+                property bool isEnqueued: downloader.isEnqueued(season, episode)
+                property bool isDownloaded: downloader.isDownloaded(season, episode)
+                property int progressPerCent: 0
 
                 Connections {
                     target: downloader
                     onDownloadStarted: {
                         if (signalSeason == season && signalEpisode == episode) {
+                            //console.log("downloadStarted " + signalSeason + "x" + signalEpisode)
                             audioArea.isEnqueued = false
                             audioArea.isDownloading = true
                         }
                     }
                     onDownloadAborted: {
                         if (signalSeason == season && signalEpisode == episode) {
+                            //console.log("downloadAborted " + signalSeason + "x" + signalEpisode)
                             audioArea.isDownloading = false
                         }
                     }
                     onDownloadEnqueued: {
                         if (signalSeason == season && signalEpisode == episode) {
+                            //console.log("downloadEnqueued " + signalSeason + "x" + signalEpisode)
                             audioArea.isEnqueued = true
                         }
                     }
                     onDownloadDequeued: {
                         if (signalSeason == season && signalEpisode == episode) {
+                            //console.log("downloadDequeued " + signalSeason + "x" + signalEpisode)
                             audioArea.isEnqueued = false
                         }
                     }
                     onFileDownloaded: {
                         if (signalSeason == season && signalEpisode == episode) {
-                            audioArea.isDownloading = false;
-                            audioArea.isDownloaded = true;
+                            //console.log("fileDownloaded " + signalSeason + "x" + signalEpisode)
+                            audioArea.isDownloading = false
+                            audioArea.isDownloaded = true
                         }
                     }
                     onFileDeleted: {
                         if (signalSeason == season && signalEpisode == episode) {
-                            audioArea.isDownloaded = false;
+                            //console.log("fileDeleted " + signalSeason + "x" + signalEpisode)
+                            audioArea.isDownloaded = false
+                        }
+                    }
+                    onDownloadProgress:
+                    {
+                        if (signalSeason == season && signalEpisode == episode) {
+                            //console.log("downloadProgress " + signalSeason + "x" + signalEpisode)
+                            audioArea.progressPerCent = (bytesReceived / bytesTotal) * 100
                         }
                     }
                 }
+
+                function remove() {
+                    //: Deleting hint on remorse timer, [SEASON]x[EPISODE] is added
+                    remorse.execute(qsTr("Deleting") + " " + getPrettyNumber(season, episode), function() { downloader.deleteFile(season, episode) } )
+                }
+                RemorsePopup { id: remorse }
 
                 PullDownMenu {
                     MenuItem {
@@ -112,9 +123,9 @@ Page {
                         onClicked: downloader.download(season, episode)
                     }
                     MenuItem {
-                        visible: !audioArea.isDownloaded && audioArea.isDownloading && !audioArea.isEnqueued && downloader.downloading
+                        visible: !audioArea.isDownloaded && audioArea.isDownloading && downloader.downloading
                         //: Abort ongoing download
-                        text: qsTr("Abort download")
+                        text: qsTr("Abort download") + " (" + audioArea.progressPerCent + ("%)")
                         onClicked: downloader.abort()
                     }
                     MenuItem {
@@ -135,57 +146,62 @@ Page {
                         visible: audioArea.isDownloaded && !audioArea.isDownloading && !audioArea.isEnqueued
                         //: Delete downloaded episode from device
                         text: qsTr("Delete from device")
-                        onClicked: downloader.deleteFile(season, episode)
+                        onClicked: audioArea.remove()
                     }
-
                     MenuLabel {
                         text: settings.value("content/" + season + "/" + episode + "/pubDate")
                     }
                 }
 
-                Label {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    //height: Theme.itemSizeLarge
-                    color: Theme.highlightColor
-                    font.pixelSize: Theme.fontSizeLarge
-                    text: settings.value("content/" + season + "/" + episode + "/title")
-                }
-
                 Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width
-                    height: playButton.height
+                    height: title.height
 
-                    IconButton {
-                        id: playButton
+                    Label {
+                        id: title
                         anchors.horizontalCenter: parent.horizontalCenter
-                        icon.source: audioPlayer.season === season && audioPlayer.episode === episode && audioPlayer.isPlaying ? "image://theme/icon-l-pause" : "image://theme/icon-l-play"
-                        onClicked: {
-                            if (audioPlayer.season === season && audioPlayer.episode === episode) {
-                                audioPlayer.isPlaying ? audioPlayer.pause() : audioPlayer.play()
-                            }
-                            else {
-                                audioPlayer.stop()
-                                audioPlayer.playEpisode(season, episode)
-                            }
-                        }
+                        //height: Theme.itemSizeLarge
+                        color: Theme.highlightColor
+                        font.pixelSize: Theme.fontSizeLarge
+                        text: settings.value("content/" + season + "/" + episode + "/title")
                     }
                     Image {
                         id: downloadedIcon
                         visible: audioArea.isDownloaded
                         anchors.right: parent.right
                         anchors.rightMargin: Theme.paddingLarge
-                        anchors.verticalCenter: playButton.verticalCenter
+                        anchors.verticalCenter: title.verticalCenter
                         source: "image://theme/icon-s-cloud-download"
                     }
                     BusyIndicator {
                         id: downloadBusyIndicator
-                        visible: audioArea.isEnqueued
+                        visible: audioArea.isEnqueued || audioArea.isDownloading
                         running: visible
                         anchors.right: parent.right
                         anchors.rightMargin: Theme.paddingLarge
-                        anchors.verticalCenter: playButton.verticalCenter
+                        anchors.verticalCenter: title.verticalCenter
                         size: BusyIndicatorSize.Small
+                    }
+                }
+
+                IconButton {
+                    id: playButton
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    icon.source: {
+                        if (player.season === season && player.episode === episode && !player.paused)
+                            return "image://theme/icon-l-pause"
+                        else
+                            return "image://theme/icon-l-play"
+                    }
+                    onClicked: {
+                        if (player.season === season && player.episode === episode && !player.paused)
+                            player.pause()
+                        else if (player.episode === episode && player.season === season)
+                            player.play()
+                        else {
+                            player.playEpisode(season, episode)
+                        }
                     }
                 }
 
@@ -194,31 +210,29 @@ Page {
                     property bool inUserControl: false
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width - 2*Theme.paddingMedium
-                    handleVisible: audioPlayer.seekable
-                    enabled: audioPlayer.seekable
+                    enabled: player.season === season && player.episode === episode && player.seekable && !player.stopped
+                    handleVisible: enabled
                     minimumValue: 0
-                    maximumValue: audioPlayer.duration
+                    maximumValue: player.duration
+                    value: 0
                     stepSize: 1000
-                    value: audioPlayer.season === season && audioPlayer.episode === episode && !audioPlayer.isStopped ? audioPlayer.position : 0
-                    valueText: inUserControl ? getTime(sliderValue): audioPlayer.season === season && audioPlayer.episode === episode && !audioPlayer.isStopped ? getTime(value) : getTime(0)
-                    label: settings.value("content/" + season + "/" + episode + "/itunes_duration")
+                    valueText: getTimeFromMs(sliderValue)
+                    label: settings.value("content/" + season + "/" + episode + "/itunes_duration", "")
                     onDownChanged: {
                         if (down) {
                             inUserControl = true
                         }
                         else {
                             inUserControl = false
-                            audioPlayer.seek(sliderValue)
+                            player.seek(sliderValue)
                         }
                     }
                     Connections {
-                        target: audioPlayer
+                        target: player
                         onPositionChanged: {
-                            slider.value = audioPlayer.season === season && audioPlayer.episode === episode ? audioPlayer.position : 0
+                            if (player.season === season && player.episode === episode) slider.value = player.position
                         }
-                        onEpisodeFinished: {
-                            pageStack.pop()
-                        }
+                        onIsEndOfMedia: if (player.season === season && player.episode === episode) pageStack.pop()
                     }
                 }
             }

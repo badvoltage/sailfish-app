@@ -124,6 +124,8 @@ int FileDownloader::abort() {
 
         qDebug() << "Aborting download of" << number.first << "x" << number.second;
         removed = _downloadQueue.removeAll(number);
+        if (removed > 0)
+            emit downloadDequeued(number.first, number.second);
         deleteFile(number.first, number.second, true);
         emit downloadAborted(number.first, number.second);
     }
@@ -143,11 +145,11 @@ int FileDownloader::dequeue(int season, int episode) {
     if (!_downloadQueue.isEmpty()) {
         if (_downloadQueue.head() == number)
             removed = abort();
-        else
+        else {
             removed = _downloadQueue.removeAll(number);
-
-        if (removed > 0)
-            emit downloadDequeued(season, episode);
+            if (removed > 0)
+                emit downloadDequeued(season, episode);
+        }
     }
 
     return removed;
@@ -173,6 +175,23 @@ bool FileDownloader::deleteFile(int season, int episode, bool force) {
     return false;
 }
 
+bool FileDownloader::isDownloading(int season, int episode) {
+    QPair<int, int> number(season, episode);
+    if (_downloadQueue.isEmpty())
+        return false;
+    else
+        return _downloadQueue.head() == number && downloading();
+}
+
+bool FileDownloader::isEnqueued(int season, int episode) {
+    QPair<int, int> number(season, episode);
+    return _downloadQueue.contains(number);
+}
+
+bool FileDownloader::isDownloaded(int season, int episode) {
+    return _settings->value(QString("downloads/%1/%2/downloaded").arg(season).arg(episode), false).toBool();
+}
+
 void FileDownloader::doEnd()
 {
     _downloadQueue.clear();
@@ -196,6 +215,7 @@ void FileDownloader::finishedData() {
 
         _settings->setValue(QString("downloads/%1/%2/downloaded").arg(number.first).arg(number.second), true);
         _settings->setValue(QString("downloads/%1/%2/localFile").arg(number.first).arg(number.second), QFileInfo(_file).absoluteFilePath());
+        _settings->sync();
 
         disconnect(sender(), SIGNAL(readyRead()),
                    this, SLOT(readData()));
@@ -233,7 +253,7 @@ void FileDownloader::setDownloading(bool downloading) {
 }
 
 void FileDownloader::checkLocalFiles() {
-    QFileInfoList files = QDir().entryInfoList(QStringList("*.mp3"), QDir::Files | QDir::Writable, QDir::Name);
+    QFileInfoList files = QDir().entryInfoList(QStringList("*.mp3"), QDir::Files, QDir::Name);
     if (files.size() > 0) {
         QList<int> seasons = _settings->seasons("downloads");
         for (int season = 0; season < seasons.size(); ++season) {
@@ -244,11 +264,10 @@ void FileDownloader::checkLocalFiles() {
                     files.removeAll(QFileInfo(fileName));
             }
         }
-        for (int file = 0; file < files.size(); ++file) {
-            if (QFile(files.at(file).absoluteFilePath()).remove()) {
-                qDebug() << "Removed local file:" << files.at(file).absoluteFilePath();
-                files.removeAt(file);
-            }
+        while (!files.isEmpty()) {
+            QFileInfo fileInfo = files.takeFirst();
+            if (QFile(fileInfo.absoluteFilePath()).remove())
+                qDebug() << "Removed local file:" << fileInfo.absoluteFilePath();
         }
     }
 }

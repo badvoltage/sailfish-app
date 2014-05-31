@@ -44,6 +44,7 @@ Page {
         header: PageHeader {
             //: Header of thloadDatae initial Page
             title: qsTr("Bad Voltage")
+            width: parent.width
         }
 
         PullDownMenu {
@@ -77,23 +78,23 @@ Page {
                 }
             }
             MenuLabel {
-                visible: !audioPlayer.isStopped
-                text: getPrettyNumber(audioPlayer.season, audioPlayer.episode) + ": " + audioPlayer.positionReadable + "/" + audioPlayer.durationReadable
+                visible: !player.stopped
+                text: getPrettyNumber(player.season, player.episode) + ": " + getTimeFromMs(player.position) + "/" + getTimeFromMs(player.duration)
             }
         }
 
         delegate: Item {
             id: myListItem
 
-            property bool isDownloading: false
-            property bool isEnqueued: false
-            property bool isDownloaded: settings.value("downloads/" + season + "/" + episode + "/downloaded", false) === "true"
-            property bool isSeen: settings.value("downloads/" + season + "/" + episode + "/seen", false) === "true"
-
             property Item contextMenu
             property bool menuOpen: contextMenu != null && contextMenu.parent === myListItem
             width: ListView.view.width
             height: menuOpen ? contextMenu.height + contentItem.height : contentItem.height
+
+            property bool isDownloading: downloader.isDownloading(season, episode)
+            property bool isEnqueued: downloader.isEnqueued(season, episode)
+            property bool isDownloaded: downloader.isDownloaded(season, episode)
+            property bool isSeen: settings.value("downloads/" + season + "/" + episode + "/seen", false) === "true"
 
             Connections {
                 target: downloader
@@ -108,6 +109,7 @@ Page {
                     if (signalSeason == season && signalEpisode == episode) {
                         //console.log("downloadAborted " + signalSeason + "x" + signalEpisode)
                         isDownloading = false
+                        progressRectangle.progress = 0
                     }
                 }
                 onDownloadEnqueued: {
@@ -125,14 +127,15 @@ Page {
                 onFileDownloaded: {
                     if (signalSeason == season && signalEpisode == episode) {
                         //console.log("fileDownloaded " + signalSeason + "x" + signalEpisode)
-                        isDownloading = false;
-                        isDownloaded = true;
+                        isDownloading = false
+                        isDownloaded = true
                     }
                 }
                 onFileDeleted: {
                     if (signalSeason == season && signalEpisode == episode) {
                         //console.log("fileDeleted " + signalSeason + "x" + signalEpisode)
-                        isDownloaded = false;
+                        isDownloaded = false
+                        progressRectangle.progress = 0
                     }
                 }
                 onDownloadProgress:
@@ -144,16 +147,17 @@ Page {
                 }
             }
             Connections {
-                target: audioPlayer
-                onEpisodeFinished: {
-                    if (finishedSeason == season && finishedEpisode == episode)
-                        listView.setSeen(index, true);
+                target: player
+                onIsEndOfMedia: {
+                    if (player.season === season && player.episode === episode)
+                        listView.setSeen(index, true)
                 }
             }
 
             BackgroundItem {
                 id: contentItem
                 height: Theme.itemSizeLarge
+                highlighted: !myListItem.menuOpen && down
 
                 Rectangle {
                     id: progressRectangle
@@ -175,8 +179,8 @@ Page {
                     id: titleLabel
                     anchors.left: numberLabel.right
                     anchors.bottom: parent.verticalCenter
-                    color: contentItem.highlighted || (season === audioPlayer.season && episode === audioPlayer.episode) ? Theme.highlightColor : Theme.primaryColor
-                    width: parent.width - downloadedIcon.width - seenIcon.width
+                    color: contentItem.highlighted || (season === player.season && episode === player.episode) ? Theme.highlightColor : Theme.primaryColor
+                    width: parent.width - downloadedIcon.width - playingIcon.width
                     text: title
                 }
                 Label {
@@ -187,27 +191,34 @@ Page {
                     font.pixelSize: Theme.fontSizeExtraSmall
                     text: pubDate
                 }
+                GlassItem {
+                    id: unseenItem
+                    visible: !isSeen
+                    color: Theme.highlightColor
+                    anchors.horizontalCenter: parent.left
+                    anchors.verticalCenter: numberLabel.verticalCenter
+                }
                 Image {
-                    id: seenIcon
-                    visible: isSeen || (audioPlayer.season === season && audioPlayer.episode === episode && audioPlayer.isPlaying)
+                    id: playingIcon
+                    visible: player.season === season && player.episode === episode && player.playing
                     anchors.right: parent.right
                     anchors.rightMargin: Theme.paddingSmall
                     anchors.verticalCenter: parent.verticalCenter
-                    source: (audioPlayer.season === season && audioPlayer.episode === episode && audioPlayer.isPlaying) ? "image://theme/icon-m-speaker" : "image://theme/icon-s-installed"
+                    source: "image://theme/icon-m-speaker"
                 }
                 Image {
                     id: downloadedIcon
-                    visible: (audioPlayer.season === season && audioPlayer.episode === episode && audioPlayer.isPlaying) ? false : isDownloaded
-                    anchors.right: seenIcon.visible ? seenIcon.left : parent.right
+                    visible: (player.season === season && player.episode === episode && player.playing) ? false : isDownloaded
+                    anchors.right: playingIcon.visible ? playingIcon.left : parent.right
                     anchors.rightMargin: Theme.paddingSmall
                     anchors.verticalCenter: parent.verticalCenter
                     source: "image://theme/icon-s-cloud-download"
                 }
                 BusyIndicator {
                     id: downloadBusyIndicator
-                    visible: isEnqueued
+                    visible: (player.season === season && player.episode === episode && player.playing) ? false : isEnqueued
                     running: visible
-                    anchors.right: seenIcon.visible ? seenIcon.left : parent.right
+                    anchors.right: playingIcon.visible ? playingIcon.left : parent.right
                     anchors.rightMargin: Theme.paddingSmall
                     anchors.verticalCenter: parent.verticalCenter
                     size: BusyIndicatorSize.Small
@@ -224,12 +235,18 @@ Page {
                     componentData.isEnqueued = isEnqueued
                     componentData.isDownloaded = isDownloaded
                     componentData.isSeen = isSeen
+                    componentData.item = myListItem
                     if (!contextMenu) {
                         contextMenu = contextMenuComponent.createObject(listView)
                     }
                     contextMenu.show(myListItem)
                 }
             }
+            function remove() {
+                //: Deleting hint on remorse timer, [SEASON]x[EPISODE] is added
+                remorse.execute(myListItem, qsTr("Deleting") + " " + getPrettyNumber(season, episode), function() { downloader.deleteFile(season, episode) } )
+            }
+            RemorseItem { id: remorse }
         }
 
         QtObject {
@@ -242,6 +259,7 @@ Page {
             property bool isEnqueued: false
             property bool isDownloaded: false
             property bool isSeen: false
+            property var item
         }
 
         Component {
@@ -256,7 +274,7 @@ Page {
                     onClicked: downloader.download(componentData.season, componentData.episode)
                 }
                 MenuItem {
-                    visible: !componentData.isDownloaded && componentData.isDownloading && !componentData.isEnqueued && downloader.downloading
+                    visible: !componentData.isDownloaded && componentData.isDownloading && downloader.downloading
                     //: Abort ongoing download
                     text: qsTr("Abort download")
                     onClicked: downloader.abort()
@@ -279,13 +297,14 @@ Page {
                     visible: componentData.isDownloaded && !componentData.isDownloading && !componentData.isEnqueued
                     //: Delete downloaded episode from device
                     text: qsTr("Delete from device")
-                    onClicked: downloader.deleteFile(componentData.season, componentData.episode)
+                    //onClicked: downloader.deleteFile(componentData.season, componentData.episode)
+                    onClicked: componentData.item.remove()
                 }
                 MenuItem {
                     //: Mark feed ass seen
                     text: !componentData.isSeen ? qsTr("Mark as seen") :
                                                   //: Unmark feed as seen
-                                                  qsTr("Remove mark")
+                                                  qsTr("Mark as unseen")
                     onClicked: listView.setSeen(componentData.index, !componentData.isSeen)
                 }
             }
@@ -296,7 +315,5 @@ Page {
             listView.currentItem.isSeen = isSeen
             settings.setValue("downloads/" + listView.model.get(index).season + "/" + listView.model.get(index).episode + "/seen", isSeen)
         }
-
-        //VerticalScrollDecorator {}
     }
 }

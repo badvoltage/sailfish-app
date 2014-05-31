@@ -42,7 +42,7 @@
     <message>
         <source>Delete from device</source>
         <extracomment>Delete downloaded episode from device</extracomment>
-        <translation>Lokale Datei löschen</translation>
+        <translation>Heruntergeladene Datei löschen</translation>
     </message>
     <message>
         <source>Add to download queue</source>
@@ -102,17 +102,17 @@ Size of the episode in MB (Mega Bytes)</extracomment>
     <message>
         <source>Delete from device</source>
         <extracomment>Delete downloaded episode from device</extracomment>
-        <translation>Lokale Datei löschen</translation>
+        <translation>Heruntergeladene Datei löschen</translation>
     </message>
     <message>
         <source>Mark as seen</source>
         <extracomment>Mark feed ass seen</extracomment>
-        <translation>Als gelesen markieren</translation>
+        <translation>Als gesehen markieren</translation>
     </message>
     <message>
-        <source>Remove mark</source>
+        <source>Mark as unseen</source>
         <extracomment>Unmark feed as seen</extracomment>
-        <translation>Markierung entfernen</translation>
+        <translation>Als ungesehen markieren</translation>
     </message>
     <message>
         <source>Download</source>
@@ -130,6 +130,11 @@ Size of the episode in MB (Mega Bytes)</extracomment>
         <source>Add to download queue</source>
         <extracomment>Add episode to download queue for offline listening (if another download is currently going on)</extracomment>
         <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <extracomment>Deleting hint on remorse timer, [SEASON]x[EPISODE] is added</extracomment>
+        <translation>Lösche</translation>
     </message>
 </context>
 <context>

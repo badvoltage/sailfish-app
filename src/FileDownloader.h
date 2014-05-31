@@ -47,22 +47,12 @@ public:
     Q_INVOKABLE int abort();
     Q_INVOKABLE int dequeue(int season, int episode);
     Q_INVOKABLE bool deleteFile(int season, int episode, bool force = false);
+    Q_INVOKABLE bool isDownloading(int season, int episode);
+    Q_INVOKABLE bool isEnqueued(int season, int episode);
+    Q_INVOKABLE bool isDownloaded(int season, int episode);
 
     // read function for property downloading
     bool downloading() { return _downloading; }
-
-signals:
-    // signals recievable in QML
-    void downloadStarted(int signalSeason, int signalEpisode);
-    void downloadAborted(int signalSeason, int signalEpisode);
-    void downloadEnqueued(int signalSeason, int signalEpisode);
-    void downloadDequeued(int signalSeason, int signalEpisode);
-    void fileDownloaded(int signalSeason, int signalEpisode);
-    void fileDeleted(int signalSeason, int signalEpisode);
-    void downloadProgress(int signalSeason, int signalEpisode, int bytesReceived, int bytesTotal);
-
-    // signal for property downloading
-    void downloadingChanged();
 
 public slots:
     // cleaning up on app closing
@@ -77,6 +67,19 @@ private slots:
     void finishedData();
     // when error occurred
     void error(QNetworkReply::NetworkError error);
+
+signals:
+    // signals recievable in QML
+    void downloadStarted(int signalSeason, int signalEpisode);
+    void downloadAborted(int signalSeason, int signalEpisode);
+    void downloadEnqueued(int signalSeason, int signalEpisode);
+    void downloadDequeued(int signalSeason, int signalEpisode);
+    void fileDownloaded(int signalSeason, int signalEpisode);
+    void fileDeleted(int signalSeason, int signalEpisode);
+    void downloadProgress(int signalSeason, int signalEpisode, int bytesReceived, int bytesTotal);
+
+    // signal for property downloading
+    void downloadingChanged();
 
 private:
     QNetworkAccessManager _manager;

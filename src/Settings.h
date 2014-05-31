@@ -30,23 +30,34 @@
 #include <QStringList>
 #include <QDebug>
 
-class Settings : public QObject
-{
+class Settings : public QObject {
     Q_OBJECT
 
 public:
-    explicit Settings(QString organisation = QString(), QString application = QString())
-    {
+    explicit Settings(QString organisation = QString(), QString application = QString(), QObject *parent = 0) :
+        QObject(parent) {
         _settings = new QSettings(organisation, application);
 
         //qDebug() << "Settings are stored in" << _settings->fileName();
 
         // values to use across the app
         _settings->beginGroup("badVoltage");
-        _settings->setValue("url", "http://badvoltage.org");
-        _settings->setValue("rssUrl", "http://www.badvoltage.org/feed/mp3/");
+        _settings->setValue("url", "http://www.badvoltage.org");
+        _settings->setValue("aboutUrl", "http://www.badvoltage.org/about");
+        _settings->setValue("rssUrl", "http://www.badvoltage.org/feed/mp3");
         _settings->setValue("communityUrl", "http://community.badvoltage.org/?mobile_view=1");
         _settings->endGroup();
+
+        _settings->beginGroup("app");
+        //_settings->setValue("mail", "scharelc@gmail.com");
+        _settings->setValue("gitUrl", "https://github.com/scharel/harbour-badvoltage");
+        _settings->endGroup();
+    }
+
+    ~Settings() {
+        if (_settings)
+            delete _settings;
+        _settings = NULL;
     }
 
     Q_INVOKABLE void setValue(const QString &key, const QVariant &value) {
