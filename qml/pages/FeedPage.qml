@@ -179,7 +179,7 @@ Page {
                     id: titleLabel
                     anchors.left: numberLabel.right
                     anchors.bottom: parent.verticalCenter
-                    color: contentItem.highlighted || (season === player.season && episode === player.episode) ? Theme.highlightColor : Theme.primaryColor
+                    color: contentItem.highlighted || (season === player.season && episode === player.episode && player.playing) ? Theme.highlightColor : Theme.primaryColor
                     width: parent.width - downloadedIcon.width - playingIcon.width
                     text: title
                 }
@@ -200,7 +200,7 @@ Page {
                 }
                 Image {
                     id: playingIcon
-                    visible: player.season === season && player.episode === episode && player.playing
+                    visible: player.season === season && player.episode === episode && player.playing && !player.paused
                     anchors.right: parent.right
                     anchors.rightMargin: Theme.paddingSmall
                     anchors.verticalCenter: parent.verticalCenter
@@ -208,18 +208,18 @@ Page {
                 }
                 Image {
                     id: downloadedIcon
-                    visible: (player.season === season && player.episode === episode && player.playing) ? false : isDownloaded
-                    anchors.right: playingIcon.visible ? playingIcon.left : parent.right
-                    anchors.rightMargin: Theme.paddingSmall
+                    visible: (player.season === season && player.episode === episode && player.playing && !player.paused) ? false : isDownloaded
+                    anchors.right: parent.right
+                    anchors.rightMargin: Theme.paddingLarge
                     anchors.verticalCenter: parent.verticalCenter
-                    source: "image://theme/icon-s-cloud-download"
+                    source: "image://theme/icon-m-download"
                 }
                 BusyIndicator {
                     id: downloadBusyIndicator
-                    visible: (player.season === season && player.episode === episode && player.playing) ? false : isEnqueued
+                    visible: (player.season === season && player.episode === episode && player.playing && !player.paused) ? false : isEnqueued
                     running: visible
-                    anchors.right: playingIcon.visible ? playingIcon.left : parent.right
-                    anchors.rightMargin: Theme.paddingSmall
+                    anchors.right: parent.right
+                    anchors.rightMargin: Theme.paddingLarge
                     anchors.verticalCenter: parent.verticalCenter
                     size: BusyIndicatorSize.Small
                 }
