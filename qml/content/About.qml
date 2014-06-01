@@ -35,7 +35,7 @@ The shows are released under the<br>
 <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">Creative Commons Attribution Share-Alike</a><br>
 license and as are free to listen to and share with others.<br>
 <a href=\"http://ccmixter.org/files/FreeInstrumentalMusic/43270\">This music</a>
-os used for the theme."
+is used for the theme."
 
 property string license: "<strong>About this app</strong> (" + settings.value("app/version") + ")<br>
 <br>
