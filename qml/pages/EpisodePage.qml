@@ -30,6 +30,12 @@ Page {
     property int season
     property int episode
 
+    Timer {
+        id: browserTimer
+        interval: 2000
+        onRunningChanged: pullDown.busy = running
+    }
+
     SilicaFlickable {
         width: parent.width
         height: audioArea.height
@@ -108,10 +114,14 @@ Page {
                 RemorsePopup { id: remorse }
 
                 PullDownMenu {
+                    id: pullDown
                     MenuItem {
                         //: Open the badvoltage.org webpage, showing this episode in external browser
                         text: qsTr("View in Browser")
-                        onClicked: Qt.openUrlExternally(settings.value("content/" + season + "/" + episode + "/link"))
+                        onClicked: {
+                            browserTimer.restart()
+                            Qt.openUrlExternally(settings.value("content/" + season + "/" + episode + "/link"))
+                        }
                     }
 
                     MenuItem {

@@ -37,7 +37,7 @@ license and as are free to listen to and share with others.<br>
 <a href=\"http://ccmixter.org/files/FreeInstrumentalMusic/43270\">This music</a>
 os used for the theme."
 
-    property string license: "<strong>About this app</strong> (" + settings.value("app/version") + ")<br>
+property string license: "<strong>About this app</strong> (" + settings.value("app/version") + ")<br>
 <br>
 Copyright © 2014  Scharel Clemens<br>
 The source code of this app is available on <a href=\"" + settings.value("app/gitUrl") + "\">GitHub</a>.<br>
