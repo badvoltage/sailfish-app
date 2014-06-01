@@ -172,7 +172,7 @@ Page {
                         anchors.right: parent.right
                         anchors.rightMargin: Theme.paddingLarge
                         anchors.verticalCenter: title.verticalCenter
-                        source: "image://theme/icon-s-cloud-download"
+                        source: "image://theme/icon-m-download"
                     }
                     BusyIndicator {
                         id: downloadBusyIndicator
@@ -203,18 +203,19 @@ Page {
                             player.playEpisode(season, episode)
                         }
                     }
+                    onPressAndHold: player.stop()
                 }
 
                 Slider {
                     id: slider
                     property bool inUserControl: false
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width - 2*Theme.paddingMedium
+                    width: parent.width //- 2*Theme.paddingMedium
                     enabled: player.season === season && player.episode === episode && player.seekable && !player.stopped
                     handleVisible: enabled
                     minimumValue: 0
                     maximumValue: player.duration
-                    value: 0
+                    value: player.season === season && player.episode === episode ? player.position : 0
                     stepSize: 1000
                     valueText: getTimeFromMs(sliderValue)
                     label: settings.value("content/" + season + "/" + episode + "/itunes_duration", "")

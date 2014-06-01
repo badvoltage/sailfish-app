@@ -51,6 +51,7 @@ public:
         _settings->beginGroup("app");
         //_settings->setValue("mail", "scharelc@gmail.com");
         _settings->setValue("gitUrl", "https://github.com/scharel/harbour-badvoltage");
+        _settings->setValue("version", "0.1-3");
         _settings->endGroup();
     }
 
