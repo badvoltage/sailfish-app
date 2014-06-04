@@ -31,21 +31,35 @@ CoverBackground {
         icon.source: "BV.png"
     }
 
-    Label {
+    /*Label {
         y: 220
         anchors.horizontalCenter: parent.horizontalCenter
         color: Theme.highlightColor
         text: player.stopped ? "Bad Voltage" : getPrettyNumber(player.season, player.episode)
+    }*/
+
+    Label {
+        id: updatingLabel
+        y: 235
+        visible: feedModel.progress !== 1
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: "Updating..."
     }
 
     Label {
         id: audioPositionLabel
-        y: 250
-        visible: !player.stopped
+        y: 235
+        visible: !updatingLabel.visible && !player.stopped
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: Theme.fontSizeSmall
-        color: Theme.secondaryColor
         text: getTimeFromMs(player.position) + "/" + getTimeFromMs(player.duration)
+    }
+
+    Label {
+        id: newEpsiodesLabel
+        y: 235
+        visible: !updatingLabel.visible && !audioPositionLabel.visible
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: (nUnSeen === 0 ? "No" : nUnSeen) + " new Episode" + (nUnSeen > 1 ? "s" : "")
     }
 
     CoverActionList {

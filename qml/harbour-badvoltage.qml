@@ -34,6 +34,7 @@ ApplicationWindow
 
     property var feedModel: FeedData { }
     Component.onCompleted: feedModel.reloadData()
+    property int nUnSeen: 0
 
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
     initialPage: Component { FeedPage { } }

@@ -29,6 +29,7 @@ ListModel {
     property int progress: 0
     Component.onCompleted: load()
     function load() {
+        nUnSeen = 0
         clear()
         console.log("Loading content from local storage")
         var count = settings.value("content/count", 0)
@@ -61,8 +62,10 @@ ListModel {
                                            "enclosure_length": settings.value("content/" + actSeason + "/" + actEpisode + "/enclosure_length", noDataString),
                                            "enclosure_type": settings.value("content/" + actSeason + "/" + actEpisode + "/enclosure_type", noDataString),
                                            "itunes_duration": settings.value("content/" + actSeason + "/" + actEpisode + "/itunes_duration", noDataString),
-                                           "seen": settings.value("downloads/" + actSeason + "/" + actEpisode + "/seen", noDataString)
+                                           "seen": settings.value("downloads/" + actSeason + "/" + actEpisode + "/seen", "false") === "true"
                                        } )
+                                if (settings.value("downloads/" + actSeason + "/" + actEpisode + "/seen", "false") !== "true")
+                                    nUnSeen = nUnSeen + 1
                             }
                         }
                     }

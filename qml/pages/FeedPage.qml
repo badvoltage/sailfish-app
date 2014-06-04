@@ -96,6 +96,13 @@ Page {
             property bool isDownloaded: downloader.isDownloaded(season, episode)
             property bool isSeen: settings.value("downloads/" + season + "/" + episode + "/seen", false) === "true"
 
+            /*ListView.onAdd: AddAnimation {
+                target: myListItem
+            }
+            ListView.onRemove: RemoveAnimation {
+                target: myListItem
+            }*/
+
             Connections {
                 target: downloader
                 onDownloadStarted: {
@@ -312,8 +319,12 @@ Page {
 
         function setSeen(index, isSeen) {
             listView.currentIndex = index
-            listView.currentItem.isSeen = isSeen
-            settings.setValue("downloads/" + listView.model.get(index).season + "/" + listView.model.get(index).episode + "/seen", isSeen)
+            if (listView.currentItem.isSeen !== isSeen) {
+                nUnSeen = isSeen ? nUnSeen-1 : nUnSeen+1
+                listView.currentItem.isSeen = isSeen
+                settings.setValue("downloads/" + listView.model.get(index).season + "/" + listView.model.get(index).episode + "/seen", isSeen)
+                settings.sync()
+            }
         }
     }
 }

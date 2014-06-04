@@ -8,6 +8,10 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Wed Jun 04 2014 Scharel Clemens <scharelc@gmail.com> 0.2-0
+- Added number of unseen episodes to cover
+- Small typo correction
+
 * Sun Jun 01 2014 Scharel Clemens <scharelc@gmail.com> 0.1-3
 - Longpress on Play/Pause button now stoppes the audio player
 - Speaker symbol is not any more displayed in FeedPage when audio is paused
