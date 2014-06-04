@@ -15,7 +15,7 @@ Name:       harbour-badvoltage
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Bad Voltage
 Version:    0.2
-Release:    1
+Release:    2
 Group:      Applications/Internet
 License:    GNU General Public License
 URL:        https://github.com/scharel/harbour-badvoltage

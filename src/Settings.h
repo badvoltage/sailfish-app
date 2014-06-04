@@ -49,9 +49,10 @@ public:
         _settings->endGroup();
 
         _settings->beginGroup("app");
-        //_settings->setValue("mail", "scharelc@gmail.com");
+        _settings->setValue("url", "http://scharel.github.io/harbour-badvoltage");
         _settings->setValue("gitUrl", "https://github.com/scharel/harbour-badvoltage");
-        _settings->setValue("version", "0.2-1");
+        _settings->setValue("version", "0.2-2");
+        _settings->setValue("agent", QString("Bad Voltage for SailfishOS - ").append(_settings->value("version").toString()));
         _settings->endGroup();
     }
 

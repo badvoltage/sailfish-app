@@ -8,6 +8,9 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Sat Jun 14 2014 Scharel Clemens <scharelc@gmail.com> 0.2-2
+- New design for cover
+
 * Wed Jun 04 2014 Scharel Clemens <scharelc@gmail.com> 0.2-1
 - Added number of unseen episodes to cover
 - Small typo correction

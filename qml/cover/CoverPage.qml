@@ -28,38 +28,30 @@ import QtMultimedia 5.0
 CoverBackground {
     CoverPlaceholder {
         id: placeHolder
-        icon.source: "BV.png"
+        icon.source: "BadVoltageW.png"
     }
 
-    /*Label {
-        y: 220
-        anchors.horizontalCenter: parent.horizontalCenter
-        color: Theme.highlightColor
-        text: player.stopped ? "Bad Voltage" : getPrettyNumber(player.season, player.episode)
-    }*/
+    Column {
+        y: 175
+        width: parent.width
+        spacing: Theme.paddingSmall
 
-    Label {
-        id: updatingLabel
-        y: 235
-        visible: feedModel.progress !== 1
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: "Updating..."
-    }
+        Label {
+            id: updatingLabel
+            //opacity: feedModel.progress !== 1 ? 1 : 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            //: While updating feed
+            text: feedModel.progress !== 1 ? qsTr("Updating...") :
+                                             //: Number of unseen episodes
+                                             (nUnSeen === 0 ? qsTr("No") : nUnSeen) + " " + qsTr("new Episode") + (nUnSeen > 1 ? qsTr("s") : qsTr(""))
+        }
 
-    Label {
-        id: audioPositionLabel
-        y: 235
-        visible: !updatingLabel.visible && !player.stopped
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: getTimeFromMs(player.position) + "/" + getTimeFromMs(player.duration)
-    }
-
-    Label {
-        id: newEpsiodesLabel
-        y: 235
-        visible: !updatingLabel.visible && !audioPositionLabel.visible
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: (nUnSeen === 0 ? "No" : nUnSeen) + " new Episode" + (nUnSeen > 1 ? "s" : "")
+        Label {
+            id: audioPositionLabel
+            opacity: !player.stopped ? 1 : 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: getTimeFromMs(player.position) + "/" + getTimeFromMs(player.duration)
+        }
     }
 
     CoverActionList {

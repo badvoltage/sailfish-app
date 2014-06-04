@@ -23,6 +23,31 @@
     </message>
 </context>
 <context>
+    <name>CoverPage</name>
+    <message>
+        <source>Updating...</source>
+        <extracomment>While updating feed</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <extracomment>Number of unseen episodes</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>new Episode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source></source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>EpisodePage</name>
     <message>
         <source>View in Browser</source>
@@ -71,7 +96,7 @@ Size of the episode in MB (Mega Bytes)</extracomment>
     <name>FeedPage</name>
     <message>
         <source>Bad Voltage</source>
-        <extracomment>Header of thloadDatae initial Page</extracomment>
+        <extracomment>Header of the initial Page</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>

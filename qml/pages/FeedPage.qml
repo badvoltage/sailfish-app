@@ -42,7 +42,7 @@ Page {
         VerticalScrollDecorator { }
 
         header: PageHeader {
-            //: Header of thloadDatae initial Page
+            //: Header of the initial Page
             title: qsTr("Bad Voltage")
             width: parent.width
         }

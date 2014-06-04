@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="de_DE">
 <context>
     <name>AboutPage</name>
     <message>
@@ -23,6 +23,33 @@
     </message>
 </context>
 <context>
+    <name>CoverPage</name>
+    <message>
+        <source>Updating...</source>
+        <extracomment>While updating feed</extracomment>
+        <translatorcomment>Wärend der Feed aktualisiert wird</translatorcomment>
+        <translation>Aktualisiere...</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <extracomment>Number of unseen episodes</extracomment>
+        <translatorcomment>Anzahl der ungehöhrten Episoden</translatorcomment>
+        <translation>Keine</translation>
+    </message>
+    <message>
+        <source>new Episode</source>
+        <translation>neue Folge</translation>
+    </message>
+    <message>
+        <source>s</source>
+        <translation>n</translation>
+    </message>
+    <message>
+        <source></source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>EpisodePage</name>
     <message>
         <source>View in Browser</source>
@@ -30,9 +57,26 @@
         <translation>Im Browser anzeigen</translation>
     </message>
     <message>
+        <source>Download</source>
+        <extracomment>Download episode for offline listening</extracomment>
+        <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <source>MB</source>
+        <extracomment>Size of the episode in MB (Mega Bytes)
+----------
+Size of the episode in MB (Mega Bytes)</extracomment>
+        <translation>MB</translation>
+    </message>
+    <message>
         <source>Abort download</source>
         <extracomment>Abort ongoing download</extracomment>
         <translation>Herunterladen abbrechen</translation>
+    </message>
+    <message>
+        <source>Add to download queue</source>
+        <extracomment>Add episode to download queue for offline listening (if another download is currently going on)</extracomment>
+        <translation>Herunterladen</translation>
     </message>
     <message>
         <source>Remove from download queue</source>
@@ -45,28 +89,16 @@
         <translation>Heruntergeladene Datei löschen</translation>
     </message>
     <message>
-        <source>Add to download queue</source>
-        <extracomment>Add episode to download queue for offline listening (if another download is currently going on)</extracomment>
-        <translation>Herunterladen</translation>
-    </message>
-    <message>
-        <source>MB</source>
-        <extracomment>Size of the episode in MB (Mega Bytes)
-----------
-Size of the episode in MB (Mega Bytes)</extracomment>
-        <translation>MB</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <extracomment>Download episode for offline listening</extracomment>
-        <translation>Herunterladen</translation>
+        <source>Deleting</source>
+        <extracomment>Deleting hint on remorse timer, [SEASON]x[EPISODE] is added</extracomment>
+        <translation>Lösche</translation>
     </message>
 </context>
 <context>
     <name>FeedPage</name>
     <message>
         <source>Bad Voltage</source>
-        <extracomment>Header of thloadDatae initial Page</extracomment>
+        <extracomment>Header of the initial Page</extracomment>
         <translation>Bad Voltage</translation>
     </message>
     <message>
