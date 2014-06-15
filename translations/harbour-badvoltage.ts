@@ -35,16 +35,16 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>new Episode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source></source>
         <translation></translation>
+    </message>
+    <message>
+        <source>unseen Episode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

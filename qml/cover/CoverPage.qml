@@ -31,25 +31,54 @@ CoverBackground {
         icon.source: "BadVoltageW.png"
     }
 
+    Timer {
+        id: updatingTimer
+        interval: 1500
+    }
+
+    Connections {
+        target: updatingLabel
+        onVisibleChanged: if (updatingLabel.visible === false) updatingTimer.restart()
+    }
+
     Column {
         y: 175
-        width: parent.width
+        x: Theme.paddingSmall
+        width: parent.width - Theme.paddingSmall
         spacing: Theme.paddingSmall
 
         Label {
             id: updatingLabel
-            //opacity: feedModel.progress !== 1 ? 1 : 0
+            visible: feedModel.progress !== 1
             anchors.horizontalCenter: parent.horizontalCenter
+            truncationMode: TruncationMode.Fade
             //: While updating feed
-            text: feedModel.progress !== 1 ? qsTr("Updating...") :
-                                             //: Number of unseen episodes
-                                             (nUnSeen === 0 ? qsTr("No") : nUnSeen) + " " + qsTr("new Episode") + (nUnSeen > 1 ? qsTr("s") : qsTr(""))
+            text: qsTr("Updating...")
+        }
+
+        Label {
+            id: playingLabel
+            visible: !updatingLabel.visible && !player.stopped && !updatingTimer.running
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            truncationMode: TruncationMode.Fade
+            text: getPrettyNumber(player.season, player.episode) + ": " + settings.value("content/" + player.season + "/" + player.episode + "/title")
+        }
+
+        Label {
+            id: newEpisodesLabel
+            visible: !updatingLabel.visible && !playingLabel.visible
+            anchors.horizontalCenter: parent.horizontalCenter
+            truncationMode: TruncationMode.Fade
+            //: Number of unseen episodes
+            text: (nUnSeen === 0 ? qsTr("No") : nUnSeen) + " " + qsTr("unseen Episode") + (nUnSeen > 1 ? qsTr("s") : qsTr(""))
         }
 
         Label {
             id: audioPositionLabel
-            opacity: !player.stopped ? 1 : 0
+            visible: !player.stopped
             anchors.horizontalCenter: parent.horizontalCenter
+            truncationMode: TruncationMode.Fade
             text: getTimeFromMs(player.position) + "/" + getTimeFromMs(player.duration)
         }
     }

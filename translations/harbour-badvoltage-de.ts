@@ -38,7 +38,7 @@
     </message>
     <message>
         <source>new Episode</source>
-        <translation>neue Folge</translation>
+        <translation type="obsolete">neue Folge</translation>
     </message>
     <message>
         <source>s</source>
@@ -47,6 +47,10 @@
     <message>
         <source></source>
         <translation></translation>
+    </message>
+    <message>
+        <source>unseen Episode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
