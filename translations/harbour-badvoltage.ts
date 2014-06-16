@@ -43,7 +43,7 @@
         <translation></translation>
     </message>
     <message>
-        <source>unseen Episode</source>
+        <source>Unseen Episode</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

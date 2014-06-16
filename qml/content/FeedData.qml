@@ -31,20 +31,20 @@ ListModel {
     function load() {
         nUnSeen = 0
         clear()
-        console.log("Loading content from local storage")
+        //console.log("Loading content from local storage")
         var count = settings.value("content/count", 0)
         if (count > 0)
         {
-            console.log(count + " episodes in local storage")
+            //console.log(count + " episodes in local storage")
             var seasons = settings.value("content/seasons", 0)
             if (seasons > 0)
             {
-                console.log(seasons + " seasons in local storage")
+                //console.log(seasons + " seasons in local storage")
                 for (var actSeason = seasons; actSeason > 0; actSeason--)
                 {
                     var episodes = settings.value("content/" + actSeason + "/episodes", 0)
                     if (episodes > 0) {
-                        console.log(episodes + " episodes in season " + actSeason)
+                        //console.log(episodes + " episodes in season " + actSeason)
                         for (var actEpisode = episodes; actEpisode > 0; actEpisode--)
                         {
                             var noDataString = "NO_DATA"

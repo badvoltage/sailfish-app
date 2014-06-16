@@ -8,6 +8,9 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Sun Jun 15 2014 Scharel Clemens <scharelc@gmail.com> 0.2-4
+- Better handling of longer texts in cover
+
 * Sun Jun 15 2014 Scharel Clemens <scharelc@gmail.com> 0.2-3
 - Showing currently playing episode again in cover
 

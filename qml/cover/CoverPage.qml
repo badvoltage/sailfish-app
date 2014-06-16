@@ -44,14 +44,15 @@ CoverBackground {
     Column {
         y: 175
         x: Theme.paddingSmall
-        width: parent.width - Theme.paddingSmall
+        width: parent.width - 2 * Theme.paddingSmall
         spacing: Theme.paddingSmall
 
         Label {
             id: updatingLabel
             visible: feedModel.progress !== 1
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
             truncationMode: TruncationMode.Fade
+            horizontalAlignment: contentWidth < width ? Text.AlignHCenter : Text.AlignLeft
             //: While updating feed
             text: qsTr("Updating...")
         }
@@ -59,26 +60,30 @@ CoverBackground {
         Label {
             id: playingLabel
             visible: !updatingLabel.visible && !player.stopped && !updatingTimer.running
-            anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
             truncationMode: TruncationMode.Fade
+            horizontalAlignment: contentWidth < width ? Text.AlignHCenter : Text.AlignLeft
             text: getPrettyNumber(player.season, player.episode) + ": " + settings.value("content/" + player.season + "/" + player.episode + "/title")
         }
 
         Label {
             id: newEpisodesLabel
             visible: !updatingLabel.visible && !playingLabel.visible
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
             truncationMode: TruncationMode.Fade
+            horizontalAlignment: wrapMode === Text.Wrap ? Text.AlignHCenter : Text.AlignLeft
+            maximumLineCount: 2
+            wrapMode: player.stopped ? Text.Wrap : Text.NoWrap
             //: Number of unseen episodes
-            text: (nUnSeen === 0 ? qsTr("No") : nUnSeen) + " " + qsTr("unseen Episode") + (nUnSeen > 1 ? qsTr("s") : qsTr(""))
+            text: (nUnSeen === 0 ? qsTr("No") : nUnSeen) + " " + qsTr("Unseen Episode") + (nUnSeen > 1 ? qsTr("s") : qsTr(""))
         }
 
         Label {
             id: audioPositionLabel
             visible: !player.stopped
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
             truncationMode: TruncationMode.Fade
+            horizontalAlignment: contentWidth < width ? Text.AlignHCenter : Text.AlignLeft
             text: getTimeFromMs(player.position) + "/" + getTimeFromMs(player.duration)
         }
     }
