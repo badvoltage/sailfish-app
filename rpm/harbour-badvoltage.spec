@@ -7,6 +7,8 @@ Name:       harbour-badvoltage
 
 # >> macros
 %define __provides_exclude_from ^%{_datadir}/.*$
+%define __data_storage /home/nemo/.local/share/%{name}
+%define __conf_storage /home/nemo/.config/%{name}
 # << macros
 
 %{!?qtc_qmake:%define qtc_qmake %qmake}
@@ -14,8 +16,8 @@ Name:       harbour-badvoltage
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Bad Voltage
-Version:    0.2
-Release:    4
+Version:    0.3
+Release:    1
 Group:      Applications/Internet
 License:    GNU General Public License
 URL:        https://github.com/scharel/harbour-badvoltage
@@ -59,6 +61,18 @@ rm -rf %{buildroot}
 
 # >> install post
 # << install post
+
+%postun
+# >> uninstall post
+if [ $1 = 0 ]; then
+    // do uninstall
+    rm -r %{__data_storage}
+    rm -r %{__conf_storage}
+else if [ $1 = 1 ]; then
+    // do update
+    fi
+fi
+# << uninstall post
 
 desktop-file-install --delete-original       \
   --dir %{buildroot}%{_datadir}/applications             \
