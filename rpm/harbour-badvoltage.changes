@@ -8,6 +8,9 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Tue Jun 23 2014 Scharel Clemens <scharelc@gmail.com> 0.3-3
+- Added busy indicator when opening links in episode page
+
 * Thu Jun 18 2014 Scharel Clemens <scharelc@gmail.com> 0.3-2
 - Removed post uninstall script (see 0.3-1)
 

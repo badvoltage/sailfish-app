@@ -272,7 +272,10 @@ Page {
                     font.pixelSize: Theme.fontSizeSmall
                     wrapMode: Text.Wrap
                     textFormat: Text.StyledText
-                    onLinkActivated: Qt.openUrlExternally(link)
+                    onLinkActivated: {
+                        browserTimer.restart()
+                        Qt.openUrlExternally(link)
+                    }
                     text: settings.value("content/" + season + "/" + episode + "/content_encoded")
                 }
 
